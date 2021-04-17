@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new NameAdapter();
         recyclerView.setAdapter(adapter);
+
+        // hide title bar
+        getSupportActionBar().hide();
     }
 
     protected void onResume() {
