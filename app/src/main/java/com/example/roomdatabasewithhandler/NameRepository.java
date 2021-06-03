@@ -1,8 +1,10 @@
 package com.example.roomdatabasewithhandler;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import androidx.room.Room;
 
@@ -11,6 +13,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static com.example.roomdatabasewithhandler.MainActivity.LOG_TAG;
 import static com.example.roomdatabasewithhandler.NameDatabase.DB_NAME;
 
 public class NameRepository {
@@ -36,9 +39,13 @@ public class NameRepository {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                dao.insert(name);
-                Message msg = mainHandler.obtainMessage(INSERT, name.getName());
-                msg.sendToTarget();
+                try {
+                    dao.insert(name);
+                    Message msg = mainHandler.obtainMessage(INSERT, name.getName());
+                    msg.sendToTarget();
+                } catch (SQLiteConstraintException e) {
+                    Log.e(LOG_TAG, e.toString());
+                }
             }
         });
     }
